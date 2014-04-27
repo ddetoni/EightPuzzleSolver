@@ -15,27 +15,35 @@ class EightPuzzleSolver:
         return None
 
     def start(self):
+        list_of_movements = []
         solution_list = self.b_state_list #recebe o estado de entrada
         count = 1
         b_state_list = self.b_state_list
         final_state = None
-        print solution_list[count-1].state
-        print self.c
 
         while(True):
             b_state_list = solution_list[count-1].get_next_states(count-1) #pega os possiveis proximos do estado atual
 
             final_state = self._contains_final_state(b_state_list)
-
+			
             if final_state != None:
+                father = final_state.index_father#pega indice do pai da solucao
                 break
             else:
                 solution_list.extend(b_state_list)#concatena no fim da lista
 
             count=count+1
-        print "solution: "
+        list_of_movements.append(father)
+        while(solution_list[father].index_father != None):
+		    list_of_movements.append(solution_list[father].index_father)
+		    #print list_of_movements
+		    father = solution_list[father].index_father
+        list_of_movements.reverse()
+        #print list_of_movements
+        print "SOLUTION" 
+        for i in list_of_movements:
+            solution_list[i].print_board()
         final_state.print_board()
-
 class BoardState:
     state = None
     index_father = None
@@ -114,5 +122,5 @@ class BoardState:
 
 
 if __name__ == '__main__':
-    puzzle = EightPuzzleSolver([4,1,2,3,0,5,6,7,8],[0,1,2,3,4,5,6,7,8])
+    puzzle = EightPuzzleSolver([7,1,2,3,4,5,6,0,8],[0,1,2,3,4,5,6,7,8])
     puzzle.start()
