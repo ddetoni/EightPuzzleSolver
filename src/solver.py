@@ -1,13 +1,31 @@
 class EightPuzzleSolver:
     b_state_list = None
+    b_state_final = None
 
-    def __init__(self, initial_state):
-        self.b_state_list = [BoardState(initial_state, None)]
+    def __init__(self, initial_state, final_state):
+        self.b_state_list = [BoardState((initial_state), None)]
+        self.b_state_final = [BoardState((initial_state), None)]
+        self.c = final_state
 
+
+
+			
     def start(self):
-        pass
-        #self.b_state_list[0].get_next_states(0)
-
+        solution_list = self.b_state_list #recebe o estado de entrada 
+        count = 1
+        i = 1 
+        b_state_list = self.b_state_list
+        print solution_list[count-1].state
+        print self.c
+        while(solution_list[count-1].state!=self.c):    
+            b_state_list = solution_list[count-1].get_next_states(count-1) #pega os possiveis proximos do estado atual
+            solution_list.extend(b_state_list)#concatena no fim da lista
+            #solution_list[count-1].print_board()
+            count=count+1
+            #print count
+        print "solution: "
+        solution_list[count-1].print_board()
+			
 class BoardState:
     state = None
     index_father = None
@@ -83,14 +101,19 @@ class BoardState:
                                                         self.state[6], self.state[7], self.state[8]
                                                         )
 
+
+		
 if __name__ == '__main__':
+    #b = BoardState([1,8,2,4,0,5,3,6,7], None)
+    
     #puzzle = EightPuzzleSolver([1,0,8,2,4,7,5,3,6])
     #puzzle.start()
-
-    b = BoardState([1,8,2,4,0,5,3,6,7], None)
-    b.print_board()
-    l = b.get_next_states(0)
-    l[0].print_board()
-    l[1].print_board()
-    l[2].print_board()
-    l[3].print_board()
+    b = BoardState([5,0,2,8,4,1,6,7,3], None)
+    c = BoardState([0,1,2,3,4,5,6,7,8], None)
+    puzzle = EightPuzzleSolver([7,1,2,3,4,5,6,0,8],[0,1,2,3,4,5,6,7,8])
+    puzzle.start()
+    #l = b.get_next_states(0)
+    #l[0].print_board()
+    #l[1].print_board()
+    #l[2].print_board()
+    #l[3].print_board()
