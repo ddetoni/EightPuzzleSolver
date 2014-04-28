@@ -25,7 +25,7 @@ class EightPuzzleSolver:
             b_state_list = solution_list[count-1].get_next_states(count-1) #pega os possiveis proximos do estado atual
 
             final_state = self._contains_final_state(b_state_list)
-			
+
             if final_state != None:
                 father = final_state.index_father#pega indice do pai da solucao
                 break
@@ -40,17 +40,19 @@ class EightPuzzleSolver:
 		    father = solution_list[father].index_father
         list_of_movements.reverse()
         #print list_of_movements
-        print "SOLUTION" 
+        print "SOLUTION"
         for i in list_of_movements:
             solution_list[i].print_board()
         final_state.print_board()
 class BoardState:
     state = None
     index_father = None
+    level = None
 
-    def __init__(self, state, index):
+    def __init__(self, state, index, level):
         self.state = state
         self.index_father = index
+        self.level = level
 
     def _empty_position(self):
         for i in range(len(self.state)):
@@ -122,5 +124,5 @@ class BoardState:
 
 
 if __name__ == '__main__':
-    puzzle = EightPuzzleSolver([7,1,2,3,4,5,6,0,8],[0,1,2,3,4,5,6,7,8])
+    puzzle = EightPuzzleSolver([7,1,8,3,4,5,6,2,0],[0,1,2,3,4,5,6,7,8])
     puzzle.start()
