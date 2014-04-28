@@ -44,10 +44,15 @@ class EightPuzzleSolver:
         for i in list_of_movements:
             solution_list[i].print_board()
         final_state.print_board()
+
+    def start_depth(self):
+
+
 class BoardState:
     state = None
     index_father = None
     level = None
+    visited = 0
 
     def __init__(self, state, index, level):
         self.state = state
