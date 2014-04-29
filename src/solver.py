@@ -14,26 +14,6 @@ class EightPuzzleSolver:
 
         return None
 
-    def start(self):
-        list_of_movements = []
-        solution_list = self.b_state_list #recebe o estado de entrada
-        count = 1
-        b_state_list = self.b_state_list
-        final_state = None
-
-        while(True):
-            b_state_list = solution_list[count-1].get_next_states(count-1) #pega os possiveis proximos do estado atual
-
-            final_state = self._contains_final_state(b_state_list)
-
-            if final_state != None:
-                father = final_state.index_father#pega indice do pai da solucao
-                break
-            else:
-                solution_list.extend(b_state_list)#concatena no fim da lista
-
-            count=count+1
-
     def _print_movements(self, index):
         movements = []
         while(self.b_state_list[index].index_father != None):
@@ -70,6 +50,25 @@ class EightPuzzleSolver:
                 del self.b_state_list[last]
 
         print "Max level hit."
+
+    def start_breadth(self, max_level):
+
+        index = 0
+        while(True):
+            b_state = self.b_state_list[index]
+
+            if self._is_solution(b_state):
+                self._print_movements(index)
+                break
+
+            if b_state.level < max_level:
+                next_states = b_state.get_next_states(index)
+                self.b_state_list.extend(next_states)
+                index += 1
+            else:
+                print "Max level hit."
+                break
+
 
 class BoardState:
     state = None
@@ -152,5 +151,6 @@ class BoardState:
 
 
 if __name__ == '__main__':
-    puzzle = EightPuzzleSolver([8,7,6,5,4,3,2,1,0],[0,1,2,3,4,5,6,7,8])
-    puzzle.start_depth(30)
+    puzzle = EightPuzzleSolver([1,2,3,0,4,5,6,7,8],[0,1,2,3,4,5,6,7,8])
+    #puzzle.start_depth(30)
+    puzzle.start_breadth(20)
