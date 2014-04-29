@@ -33,17 +33,18 @@ class EightPuzzleSolver:
                 solution_list.extend(b_state_list)#concatena no fim da lista
 
             count=count+1
-        list_of_movements.append(father)
-        while(solution_list[father].index_father != None):
-		    list_of_movements.append(solution_list[father].index_father)
-		    #print list_of_movements
-		    father = solution_list[father].index_father
-        list_of_movements.reverse()
-        #print list_of_movements
-        print "SOLUTION"
-        for i in list_of_movements:
-            solution_list[i].print_board()
-        final_state.print_board()
+
+    def _print_movements(self, index):
+        movements = []
+        while(self.b_state_list[index].index_father != None):
+            movements.append(index)
+            index = self.b_state_list[index].index_father
+
+        movements.append(index)
+        movements.reverse()
+
+        for num in movements:
+            self.b_state_list[num].print_board()
 
     def _is_solution(self, b_state):
         if b_state.state == self.b_state_final.state:
@@ -52,17 +53,14 @@ class EightPuzzleSolver:
             return 0
 
     def start_depth(self, max_level):
-        count = 0
+
         while(self.b_state_list):
-            print count
-            count += 1
             last = len(self.b_state_list)-1 #Last position on array
             b_state = self.b_state_list[last]
 
-            #print b_state.level
             if self._is_solution(b_state):
-                print b_state.state
-                return ""
+                self._print_movements(last)
+                break
 
             if not b_state.visited and b_state.level < max_level:
                 b_state.visited = 1
@@ -70,6 +68,8 @@ class EightPuzzleSolver:
                 self.b_state_list.extend(next_states)
             else:
                 del self.b_state_list[last]
+
+        print "Max level hit."
 
 class BoardState:
     state = None
@@ -139,8 +139,8 @@ class BoardState:
             state_list.append(self._change_position(7, 8, index_father))
             return state_list
         elif empty_pos == 8:
-            state_list.append(self._change_position(8, 5, index_father))
             state_list.append(self._change_position(8, 7, index_father))
+            state_list.append(self._change_position(8, 5, index_father))
             return state_list
 
     def print_board(self):
@@ -152,5 +152,5 @@ class BoardState:
 
 
 if __name__ == '__main__':
-    puzzle = EightPuzzleSolver([1,2,3,4,5,6,0,7,8],[0,1,2,3,4,5,6,7,8])
-    puzzle.start_depth(18)
+    puzzle = EightPuzzleSolver([8,7,6,5,4,3,2,1,0],[0,1,2,3,4,5,6,7,8])
+    puzzle.start_depth(30)
