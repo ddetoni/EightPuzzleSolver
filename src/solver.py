@@ -3,8 +3,8 @@ class EightPuzzleSolver:
     b_state_final = None
 
     def __init__(self, initial_state, final_state):
-        self.b_state_list = [BoardState((initial_state), None)]
-        self.b_state_final = [BoardState((initial_state), None)]
+        self.b_state_list = [BoardState((initial_state), None, 0)]
+        self.b_state_final = BoardState((final_state), None, 0)
         self.c = final_state
 
     def _contains_final_state(self, list_states):
@@ -45,8 +45,31 @@ class EightPuzzleSolver:
             solution_list[i].print_board()
         final_state.print_board()
 
-    def start_depth(self):
+    def _is_solution(self, b_state):
+        if b_state.state == self.b_state_final.state:
+            return 1
+        else:
+            return 0
 
+    def start_depth(self, max_level):
+        count = 0
+        while(self.b_state_list):
+            print count
+            count += 1
+            last = len(self.b_state_list)-1 #Last position on array
+            b_state = self.b_state_list[last]
+
+            #print b_state.level
+            if self._is_solution(b_state):
+                print b_state.state
+                return ""
+
+            if not b_state.visited and b_state.level < max_level:
+                b_state.visited = 1
+                next_states = b_state.get_next_states(last)
+                self.b_state_list.extend(next_states)
+            else:
+                del self.b_state_list[last]
 
 class BoardState:
     state = None
@@ -65,7 +88,7 @@ class BoardState:
                 return i
 
     def _change_position(self, pos1, pos2, index_father):
-        b_state = BoardState(self.state[:], index_father)
+        b_state = BoardState(self.state[:], index_father, self.level+1)
 
         temp = b_state.state[pos1]
         b_state.state[pos1] = b_state.state[pos2]
@@ -129,5 +152,5 @@ class BoardState:
 
 
 if __name__ == '__main__':
-    puzzle = EightPuzzleSolver([7,1,8,3,4,5,6,2,0],[0,1,2,3,4,5,6,7,8])
-    puzzle.start()
+    puzzle = EightPuzzleSolver([1,2,3,4,5,6,0,7,8],[0,1,2,3,4,5,6,7,8])
+    puzzle.start_depth(18)
