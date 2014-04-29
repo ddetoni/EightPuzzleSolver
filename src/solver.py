@@ -1,3 +1,5 @@
+import sys
+
 class EightPuzzleSolver:
     b_state_list = None
     b_state_final = None
@@ -23,8 +25,10 @@ class EightPuzzleSolver:
         movements.append(index)
         movements.reverse()
 
+        count_move = 0
         for num in movements:
-            self.b_state_list[num].print_board()
+            self.b_state_list[num].print_board(count_move)
+            count_move += 1
 
     def _is_solution(self, b_state):
         if b_state.state == self.b_state_final.state:
@@ -33,42 +37,46 @@ class EightPuzzleSolver:
             return 0
 
     def start_depth(self, max_level):
-
+        nodes_visited = 0
         while(self.b_state_list):
             last = len(self.b_state_list)-1 #Last position on array
             b_state = self.b_state_list[last]
 
             if self._is_solution(b_state):
                 self._print_movements(last)
-                break
+                print "Number of nodes visited: %s" % nodes_visited
+                return 1
 
             if not b_state.visited and b_state.level < max_level:
                 b_state.visited = 1
+                nodes_visited += 1
                 next_states = b_state.get_next_states(last)
                 self.b_state_list.extend(next_states)
             else:
                 del self.b_state_list[last]
 
         print "Max level hit."
+        return 0
 
     def start_breadth(self, max_level):
 
         index = 0
-        while(True):
+        while(index < len(self.b_state_list)):
             b_state = self.b_state_list[index]
 
             if self._is_solution(b_state):
                 self._print_movements(index)
-                break
+                print "Number of visited nodes: %s" % index
+                return 1
 
             if b_state.level < max_level:
                 next_states = b_state.get_next_states(index)
                 self.b_state_list.extend(next_states)
-                index += 1
-            else:
-                print "Max level hit."
-                break
 
+            index += 1
+
+        print "Max level hit."
+        return 0
 
 class BoardState:
     state = None
@@ -142,15 +150,31 @@ class BoardState:
             state_list.append(self._change_position(8, 5, index_father))
             return state_list
 
-    def print_board(self):
-        print "|%s %s %s|\n|%s %s %s|\n|%s %s %s|\n" % (self.state[0], self.state[1], self.state[2],
-                                                        self.state[3], self.state[4], self.state[5],
-                                                        self.state[6], self.state[7], self.state[8]
-                                                        )
+    def print_board(self, index):
+        print "|%s %s %s|\n|%s %s %s| ---> %s\n|%s %s %s|\n" % (self.state[0], self.state[1], self.state[2],
+                                                                self.state[3], self.state[4], self.state[5], index,
+                                                                self.state[6], self.state[7], self.state[8]
+                                                                )
 
 
 
 if __name__ == '__main__':
-    puzzle = EightPuzzleSolver([1,2,3,0,4,5,6,7,8],[0,1,2,3,4,5,6,7,8])
-    #puzzle.start_depth(30)
-    puzzle.start_breadth(20)
+
+    search_type = sys.argv[1]
+
+    max_level = int(sys.argv[2])
+
+    initial_state = sys.argv[3][1:18].split(',')
+    initial_state = [int(num) for num in initial_state]
+
+    final_state = sys.argv[4][1:18].split(',')
+    final_state = [int(num) for num in final_state]
+
+    puzzle = EightPuzzleSolver(initial_state, final_state)
+
+    if search_type == '-d':
+        print "Depth-First Searching..."
+        puzzle.start_depth(max_level)
+    elif search_type == '-b':
+        print "Breadth-First Searching..."
+        puzzle.start_breadth(max_level)
